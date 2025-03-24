@@ -102,7 +102,7 @@ def compute_critical_D(N, mu=1):
 
 # Streamlit app layout
 st.title("GM System with Diffusion")
-
+st.write("New text")
 
 # Sidebar for user inputs
 st.sidebar.header("Parameters")
