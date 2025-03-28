@@ -1,3 +1,3 @@
 import streamlit as st  # type: ignore
 
-st.write("hello")
+st.write("Home Page")
