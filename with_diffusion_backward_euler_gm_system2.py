@@ -56,7 +56,7 @@ $$
 \\tau \\frac{\\partial H}{\\partial t} = D_H \\nabla^2 H - \\mu H + A^2
 $$
 
-> For simulations **without diffusion**, the spatial Laplacian terms ($$\\( D_A \\nabla^2 A \\)$$ and $$\\( D_H \\nabla^2 H \\)$$) are omitted.
+> For simulations **without diffusion**, the spatial Laplacian terms ($$ D_A \\nabla^2 A $$ and $$ D_H \\nabla^2 H $$) are omitted.
 
 ---
 
@@ -64,12 +64,12 @@ $$
 
 | Parameter | Description |
 |-----------|-------------|
-| **A, H** | Activator and inhibitor concentrations |
-| **$$\\( D_A, D_H \\)$$** | Diffusion coefficients for activator and inhibitor |
-| **$$\\( \\tau \\)$$** | Inhibitor response time |
-| **$$\\( \\mu \\)$$** | Inhibitor decay rate |
-| **$$\\( k \\)$$** | Saturation constant (GM 2 only) |
-| **$$\\( c \\)$$** | Constant activator production (GM 3 only) |
+| **$$ A, H $$** | Activator and inhibitor concentrations |
+| **$$ D_A, D_H $$** | Diffusion coefficients for activator and inhibitor |
+| **$$ \\tau $$** | Inhibitor response time |
+| **$$ \\mu $$** | Inhibitor decay rate |
+| **$$ k $$** | Saturation constant (GM 2 only) |
+| **$$ c $$** | Constant activator production (GM 3 only) |
 
 ---
 
