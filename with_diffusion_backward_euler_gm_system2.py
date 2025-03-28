@@ -1,78 +1,88 @@
 import streamlit as st  # type: ignore
 
-import matplotlib.pyplot as plt
-
 st.set_page_config(page_title="Biological Pattern Formation - GM Model", layout="wide")
 
 # Title
-st.title("🧬 Biological Pattern Formation")
-st.subheader("Gierer-Meinhardt Model Simulation and Analysis")
+st.title("🧬 Biological Pattern Formation for the Gierer–Meinhardt System")
 
-# Description
+# Overview
 st.markdown("""
-Welcome to this interactive web app that explores the fascinating world of **biological pattern formation** using the **Gierer-Meinhardt (GM) model**.
-
-This project investigates the mathematical modeling of **activator-inhibitor systems** in biology, focusing on how stable patterns like spots and stripes emerge. The Gierer-Meinhardt model consists of nonlinear reaction terms with and without diffusion, simulating the interactions between:
-
-- **Activator (A)**: Promotes its own production and that of the inhibitor.
-- **Inhibitor (H)**: Suppresses activator production and diffuses over a longer range.
-
-The system is known for exhibiting **Turing instability**, which underlies pattern formation in morphogenesis.
+Welcome to this interactive web application focused on simulating and exploring **biological pattern formation** through the **Gierer–Meinhardt model**, a classic framework for modelling **activator–inhibitor dynamics** in developmental biology.
 
 ---
 
-### 📐 Key Model Equations (Without Diffusion)
+### 🎯 Aim of the Project
 
-""")
+The primary aim of this project is to:
 
-# GM1
-st.markdown("#### GM 1 – Basic System")
-st.latex(r"""
-A_{n+1} = A_n + \Delta t \left(-A_n + \frac{A_n^2}{H_n + \epsilon}\right)
-""")
-st.latex(r"""
-H_{n+1} = H_n + \Delta t \left(\frac{-H_n + A_n^2}{\tau} \right)
-""")
+> **Investigate the dynamics and pattern-forming capabilities of the Gierer–Meinhardt system**, both with and without spatial diffusion, by examining multiple model variants. Through numerical simulations, we aim to identify conditions under which the system exhibits steady states, oscillations, or spatial pattern formation — with a focus on the emergence of Turing instability.
 
-# GM2
-st.markdown("#### GM 2 – With Activator Saturation")
-st.latex(r"""
-A_{n+1} = A_n + \Delta t \left(-A_n + \frac{A_n^2}{(H_n + \epsilon)(1 + k A_n^2)}\right)
-""")
-st.latex(r"""
-H_{n+1} = H_n + \Delta t \left(\frac{-H_n + A_n^2}{\tau} \right)
-""")
+---
 
-# GM3
-st.markdown("#### GM 3 – With Constant Activator Production")
-st.latex(r"""
-A_{n+1} = A_n + \Delta t \left(-A_n + \frac{A_n^2}{H_n + \epsilon} + c\right)
-""")
-st.latex(r"""
-H_{n+1} = H_n + \Delta t \left(\frac{-H_n + A_n^2}{\tau} \right)
-""")
+### 📘 Background
 
-# Parameters Explanation
-st.markdown("""
+The **Gierer–Meinhardt model** describes interactions between:
+
+- **Activator (A)** – promotes its own production and that of the inhibitor.
+- **Inhibitor (H)** – suppresses the activator.
+
+These interactions, coupled with spatial diffusion, can lead to the emergence of **self-organised patterns**, such as those observed in animal skin or plant structures.
+
+---
+
+### 📐 Gierer–Meinhardt Model Variants
+
+#### GM 1 – Basic System
+$$
+\\frac{\\partial A}{\\partial t} = D_A \\nabla^2 A - A + \\frac{A^2}{H}
+$$
+$$
+\\tau \\frac{\\partial H}{\\partial t} = D_H \\nabla^2 H - \\mu H + A^2
+$$
+
+#### GM 2 – With Activator Saturation
+$$
+\\frac{\\partial A}{\\partial t} = D_A \\nabla^2 A - A + \\frac{A^2}{H(1 + k A^2)}
+$$
+$$
+\\tau \\frac{\\partial H}{\\partial t} = D_H \\nabla^2 H - \\mu H + A^2
+$$
+
+#### GM 3 – With Constant Activator Production
+$$
+\\frac{\\partial A}{\\partial t} = D_A \\nabla^2 A - A + \\frac{A^2}{H} + c
+$$
+$$
+\\tau \\frac{\\partial H}{\\partial t} = D_H \\nabla^2 H - \\mu H + A^2
+$$
+
+> For simulations **without diffusion**, the spatial Laplacian terms (\\( D_A \\nabla^2 A \\) and \\( D_H \\nabla^2 H \\)) are omitted.
+
 ---
 
 ### 🔍 Parameter Descriptions
 
-- **A, H**: Concentrations of activator and inhibitor.
-- **Δt**: Time step used in the numerical simulation.
-- **τ (tau)**: Inhibitor response time.
-- **ε**: A small constant to avoid division by zero.
-- **k**: Saturation constant controlling nonlinear activator feedback.
-- **c**: Constant activator production rate.
+| Parameter | Description |
+|-----------|-------------|
+| **A, H** | Activator and inhibitor concentrations |
+| **\\( D_A, D_H \\)** | Diffusion coefficients for activator and inhibitor |
+| **\\( \\tau \\)** | Inhibitor response time |
+| **\\( \\mu \\)** | Inhibitor decay rate |
+| **\\( k \\)** | Saturation constant (GM 2 only) |
+| **\\( c \\)** | Constant activator production (GM 3 only) |
 
 ---
 
-This simulation is implemented using the **Forward Euler method**, a simple numerical integration technique suitable for exploring oscillations, convergence, and stability behavior in dynamic systems.
+### 🧭 Navigation
 
-Use the navigation sidebar to explore simulations of each GM variant, examine oscillations, convergence, and eventually spatial pattern formation with diffusion!
+Use the sidebar to:
+- Simulate each GM system numerically.
+- Explore convergence, oscillatory behaviour, and stability.
+- Add spatial diffusion and visualise Turing patterns.
+
+---
 """)
 
 # Footer
 st.markdown("---")
-st.info("Developed as part of a research project on biological pattern formation. Explore more via the sidebar!")
-
+st.info("Developed as part of a project on pattern formation in biological systems using the Gierer–Meinhardt model.")
