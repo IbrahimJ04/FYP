@@ -7,7 +7,7 @@ st.title("🧬 Biological Pattern Formation for the Gierer–Meinhardt System")
 
 # Overview
 st.markdown("""
-Welcome to this interactive web application focused on simulating and exploring **biological pattern formation** through the **Gierer–Meinhardt model**, a classic framework for modelling **activator–inhibitor dynamics** in developmental biology.
+This interactive web application focusses on simulating and exploring **biological pattern formation** through the **Gierer–Meinhardt model**, a classic framework for modelling **activator–inhibitor dynamics** in developmental biology.
 
 ---
 
@@ -26,7 +26,7 @@ The **Gierer–Meinhardt model** describes interactions between:
 - **Activator (A)** – promotes its own production and that of the inhibitor.
 - **Inhibitor (H)** – suppresses the activator.
 
-These interactions, coupled with spatial diffusion, can lead to the emergence of **self-organised patterns**, such as those observed in animal skin or plant structures.
+These interactions, coupled with spatial diffusion, can lead to the emergence of **spatial patterns**, such as those observed in animal skin or plant structures.
 
 ---
 
@@ -56,7 +56,7 @@ $$
 \\tau \\frac{\\partial H}{\\partial t} = D_H \\nabla^2 H - \\mu H + A^2
 $$
 
-> For simulations **without diffusion**, the spatial Laplacian terms (\\( D_A \\nabla^2 A \\) and \\( D_H \\nabla^2 H \\)) are omitted.
+> For simulations **without diffusion**, the spatial Laplacian terms ($$\\( D_A \\nabla^2 A \\)$$ and $$\\( D_H \\nabla^2 H \\)$$) are omitted.
 
 ---
 
@@ -65,11 +65,11 @@ $$
 | Parameter | Description |
 |-----------|-------------|
 | **A, H** | Activator and inhibitor concentrations |
-| **\\( D_A, D_H \\)** | Diffusion coefficients for activator and inhibitor |
-| **\\( \\tau \\)** | Inhibitor response time |
-| **\\( \\mu \\)** | Inhibitor decay rate |
-| **\\( k \\)** | Saturation constant (GM 2 only) |
-| **\\( c \\)** | Constant activator production (GM 3 only) |
+| **$$\\( D_A, D_H \\)$$** | Diffusion coefficients for activator and inhibitor |
+| **$$\\( \\tau \\)$$** | Inhibitor response time |
+| **$$\\( \\mu \\)$$** | Inhibitor decay rate |
+| **$$\\( k \\)$$** | Saturation constant (GM 2 only) |
+| **$$\\( c \\)$$** | Constant activator production (GM 3 only) |
 
 ---
 
@@ -82,7 +82,3 @@ Use the sidebar to:
 
 ---
 """)
-
-# Footer
-st.markdown("---")
-st.info("Developed as part of a project on pattern formation in biological systems using the Gierer–Meinhardt model.")
