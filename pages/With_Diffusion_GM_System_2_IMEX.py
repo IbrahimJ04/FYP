@@ -121,7 +121,7 @@ system = st.sidebar.selectbox(
 T = st.sidebar.number_input("Parameter T", value=1.11, min_value=0.01, step=0.01)
 delta_t = st.sidebar.number_input("Time step (delta_t)", value=0.05, min_value=0.0001, step=0.0001, format="%.3f")
 delta_x = st.sidebar.number_input("Space step (delta_x)", value=0.1, min_value=0.01, step=0.01)
-t_end = st.sidebar.number_input("End time", value=25.0, min_value=0.01, step=0.1)
+t_end = st.sidebar.number_input("End time", value=50.0, min_value=0.01, step=0.1)
 x_end = st.sidebar.number_input("End space", value=10.0, min_value=0.01, step=0.1)
 D_A = st.sidebar.number_input("Diffusion coefficient for A", value=0.01, min_value=0.0, step=0.001)
 D_H = st.sidebar.number_input("Diffusion coefficient for H", value=1.0, min_value=0.0, step=0.001)
