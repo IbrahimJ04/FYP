@@ -56,7 +56,7 @@ ax.text(d2, -8, r'$d_2$', ha='center', va='top', fontsize=11)
 
 ax.set_xlabel(r'$d$')
 ax.set_ylabel('Discriminant')
-ax.set_title('Discriminant condition for Turing instability')
+ax.set_title('Discriminant Condition for Turing Instability')
 ax.legend()
 ax.grid(True)
 
