@@ -38,15 +38,15 @@ def forward_euler_gm_system2_np_roll(system, T, A_0, H_0, delta_t, delta_x, t_en
         # Update based on the selected GM system
         if system == "GM 1 - With diffusion":
             A[:, n + 1] = A[:, n] + delta_t * (D_A * A_xx - A[:, n] + (A[:, n]**2) / (H[:, n] + epsilon))
-            H[:, n + 1] = H[:, n] + delta_t * (D_H * H_xx - H[:, n] + A[:, n]**2 / T)
+            H[:, n + 1] = H[:, n] + delta_t * (D_H * H_xx - mu*H[:, n] + A[:, n]**2 / T)
         elif system == "GM 2 - With diffusion, with activator saturation" and k is not None:
             A[:, n + 1] = A[:, n] + delta_t * (
                 D_A * A_xx - A[:, n] + ((A[:, n]**2) / ((H[:, n] + epsilon) * (1 + k * A[:, n]**2)))
             )
-            H[:, n + 1] = H[:, n] + delta_t * (D_H * H_xx - H[:, n] + A[:, n]**2 / T)
+            H[:, n + 1] = H[:, n] + delta_t * (D_H * H_xx - mu*H[:, n] + A[:, n]**2 / T)
         elif system == "GM 3 - With diffusion, with basic activator production" and c is not None:
             A[:, n + 1] = A[:, n] + delta_t * (D_A * A_xx - A[:, n] + (A[:, n]**2) / (H[:, n] + epsilon) + c)
-            H[:, n + 1] = H[:, n] + delta_t * (D_H * H_xx - H[:, n] + A[:, n]**2 / T)
+            H[:, n + 1] = H[:, n] + delta_t * (D_H * H_xx - mu*H[:, n] + A[:, n]**2 / T)
 
         # Check for overflow or invalid values
         if np.any(np.isnan(A[:, n + 1])) or np.any(np.isnan(H[:, n + 1])):
@@ -110,6 +110,7 @@ t_end = st.sidebar.number_input("End time", value=25.0, min_value=0.01, step=0.1
 x_end = st.sidebar.number_input("End space", value=10.0, min_value=0.01, step=0.1)
 D_A = st.sidebar.number_input("Diffusion coefficient for A", value=0.01, min_value=0.0, step=0.01)
 D_H = st.sidebar.number_input("Diffusion coefficient for H", value=1.0, min_value=0.0, step=0.01)
+mu = st.sidebar.number_input("Inhibitor decay rate (\mu)", value=1, min_value=1, step=1)
 
 # Input for r (positive integer for sinusoidal perturbation)
 r = st.sidebar.number_input("Integer r for initial condition", value=1, min_value=1, step=1)

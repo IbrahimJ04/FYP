@@ -43,13 +43,13 @@ def backward_euler_gm_system2(system, T, A_0, H_0, delta_t, delta_x, t_end, x_en
 
         if system == "GM 1 - With diffusion":
             b_A = A_old + delta_t * (-A_old + (A_old**2) / (H_old + epsilon))
-            b_H = H_old + delta_t * ((-H_old + A_old**2) / T)
+            b_H = H_old + delta_t * ((-mu*H_old + A_old**2) / T)
         elif system == "GM 2 - With diffusion, with activator saturation" and k is not None:
             b_A = A_old + delta_t * (-A_old + (A_old**2) / ((H_old + epsilon) * (1 + k * A_old**2)))
-            b_H = H_old + delta_t * ((-H_old + A_old**2) / T)
+            b_H = H_old + delta_t * ((-mu*H_old + A_old**2) / T)
         elif system == "GM 3 - With diffusion, with basic activator production" and c is not None:
             b_A = A_old + delta_t * (-A_old + (A_old**2) / (H_old + epsilon) + c)
-            b_H = H_old + delta_t * ((-H_old + A_old**2) / T)
+            b_H = H_old + delta_t * ((-mu*H_old + A_old**2) / T)
         else:
             st.error("Invalid system configuration or missing parameters.")
             break
@@ -125,6 +125,7 @@ t_end = st.sidebar.number_input("End time", value=50.0, min_value=0.01, step=0.1
 x_end = st.sidebar.number_input("End space", value=10.0, min_value=0.01, step=0.1)
 D_A = st.sidebar.number_input("Diffusion coefficient for A", value=0.01, min_value=0.0, step=0.001)
 D_H = st.sidebar.number_input("Diffusion coefficient for H", value=1.0, min_value=0.0, step=0.001)
+mu = st.sidebar.number_input("Inhibitor decay rate (\mu)", value=1, min_value=1, step=1)
 
 # Input for r (positive integer for sinusoidal perturbation)
 r = st.sidebar.number_input("Integer r for initial condition", value=1, min_value=1, step=1)
