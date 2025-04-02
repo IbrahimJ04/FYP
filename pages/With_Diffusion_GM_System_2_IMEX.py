@@ -118,14 +118,14 @@ system = st.sidebar.selectbox(
 )
 
 # Parameters input
-T = st.sidebar.number_input("Parameter T", value=1.11, min_value=0.01, step=0.01)
-delta_t = st.sidebar.number_input("Time step (delta_t)", value=0.05, min_value=0.0001, step=0.0001, format="%.3f")
-delta_x = st.sidebar.number_input("Space step (delta_x)", value=0.1, min_value=0.01, step=0.01)
+T = st.sidebar.number_input("Reaction time constant (τ)", value=1.11, min_value=0.01, step=0.01)
+delta_t = st.sidebar.number_input("Time step (Δt)", value=0.05, min_value=0.0001, step=0.0001, format="%.3f")
+delta_x = st.sidebar.number_input("Space step (Δx)", value=0.1, min_value=0.01, step=0.01)
 t_end = st.sidebar.number_input("End time", value=50.0, min_value=0.01, step=0.1)
 x_end = st.sidebar.number_input("End space", value=10.0, min_value=0.01, step=0.1)
 D_A = st.sidebar.number_input("Diffusion coefficient for A", value=0.01, min_value=0.0, step=0.001)
 D_H = st.sidebar.number_input("Diffusion coefficient for H", value=1.0, min_value=0.0, step=0.001)
-mu = st.sidebar.number_input("Inhibitor decay rate (\mu)", value=1, min_value=1, step=1)
+mu = st.sidebar.number_input("Inhibitor decay rate (μ)", value=1, min_value=1, step=1)
 
 # Input for r (positive integer for sinusoidal perturbation)
 r = st.sidebar.number_input("Integer r for initial condition", value=1, min_value=1, step=1)
