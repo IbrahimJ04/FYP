@@ -12,7 +12,7 @@ st.markdown("""
 This interactive web application focusses on simulating and exploring **biological pattern formation** through the **Gierer–Meinhardt model**, a classic framework for modelling **activator–inhibitor dynamics** in developmental biology.
 
 ---
-abc
+
 ### 🎯 Aim of the Project
 
 The primary aim of this project is to:
