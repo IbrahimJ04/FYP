@@ -24,7 +24,7 @@ def forward_euler_gm_system2_np_roll(system, T, A_0, H_0, delta_t, delta_x, t_en
         st.warning(f"Time step (delta_t) is too large for stability. Reduce it to less than {delta_x**2 / (2 * max_D):.5f}")
 
     # Forward Euler method with np.roll for periodic boundary conditions
-    for n in range(N_t - 1):  # Iterate over time
+    for n in range(N_t - 1):  # Iterate over time --> 'for x in range(3) --> gives (0, 1, 2)'
         # Apply periodic boundary conditions using np.roll
         A_left = np.roll(A[:, n], 1)   # Left neighbour
         A_right = np.roll(A[:, n], -1) # Right neighbour
