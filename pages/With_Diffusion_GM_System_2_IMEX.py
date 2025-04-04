@@ -134,8 +134,8 @@ r = st.sidebar.number_input("Integer r for initial condition", value=1, min_valu
 x_vals = np.linspace(0, x_end, int(x_end / delta_x))
 
 # Define initial conditions based on sinusoidal perturbation
-A_0 = 1 + 0.1 * np.sin(2 * np.pi * r * x_vals)
-H_0 = 1 + 0.1 * np.sin(2 * np.pi * r * x_vals)
+A_0 = mu + 0.1 * np.sin(2 * np.pi * r * x_vals)
+H_0 = mu + 0.1 * np.sin(2 * np.pi * r * x_vals)
 
 # Conditionally display k and c parameters
 k = st.sidebar.number_input("Parameter k", value=1.0, min_value=0.01, step=0.01) if system == "GM 2 - With diffusion, with activator saturation" else None
