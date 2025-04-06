@@ -22,15 +22,15 @@ def without_diffusion_gm_system1(system, T, A_0, H_0, delta_t, t_end, k=0.01, c=
     if system == "GM 1 - Without diffusion":
         for n in range(N-1):
             A[n+1] = A[n] + delta_t * (-A[n] + (A[n]**2) / (H[n] + epsilon))
-            H[n+1] = H[n] + delta_t * ((-H[n] + A[n]**2) / T)
+            H[n+1] = H[n] + delta_t * ((-mu*H[n] + A[n]**2) / T)
     elif system == "GM 2 - Without diffusion, with activator saturation":
         for n in range(N-1):
             A[n+1] = A[n] + delta_t * (-A[n] + (A[n]**2) / ((H[n] + epsilon) * (1 + k * A[n]**2)))
-            H[n+1] = H[n] + delta_t * ((-H[n] + A[n]**2) / T)
+            H[n+1] = H[n] + delta_t * ((-mu*H[n] + A[n]**2) / T)
     elif system == "GM 3 - Without diffusion, with basic activator production":
         for n in range(N-1):
             A[n+1] = A[n] + delta_t * (-A[n] + ((A[n]**2) / (H[n] + epsilon)) + c)
-            H[n+1] = H[n] + delta_t * ((-H[n] + A[n]**2) / T)
+            H[n+1] = H[n] + delta_t * ((-mu*H[n] + A[n]**2) / T)
 
     return A, H, t
 
@@ -57,6 +57,7 @@ A_0 = st.sidebar.number_input("Initial condition for A", value=0.9, min_value=0.
 H_0 = st.sidebar.number_input("Initial condition for H", value=0.9, min_value=0.0, step=0.01)
 delta_t = st.sidebar.number_input("Time step (Δt)", value=0.001, min_value=0.0001, step=0.0001)
 t_end = st.sidebar.number_input("End time", value=100.0, min_value=0.01, step=0.1)
+mu = st.sidebar.number_input("Inhibitor decay rate (μ)", value=1, min_value=1, step=1)
 
 # Only show k and c parameters if they apply to the selected system
 if system == "GM 2 - Without diffusion, with activator saturation":
