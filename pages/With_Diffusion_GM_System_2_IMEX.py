@@ -228,7 +228,7 @@ else:
     if D_H > D_effective_critical:
         st.success("Turing instability is expected: patterns may form and evolve.")
     else:
-        st.warning("No Turing instability: the steady state is stable and no pattern formation is expected.")
+        st.warning("No Turing instability: the steady state is stable and no pattern formation is expected. Any observed peaks are seeded (from initial perturbations) not emerged.")
 
 
 # Plot activator and inhibitor concentrations across space at final time step
