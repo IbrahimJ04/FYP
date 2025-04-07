@@ -235,7 +235,7 @@ st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
 
 # Display Stability Warning
 if D_H > D_critical:
-    st.success("Turing instability is expected: patterns may form and evolve (steady state is unstable).")
+    st.success("Turing instability is expected: patterns may form and evolve.")
 else:
     st.warning("No Turing instability: the steady state is stable and no pattern formation is expected.")
 
