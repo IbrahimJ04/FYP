@@ -87,7 +87,7 @@ def count_spatial_peaks(A_final, x_vals):
 
 
 
-def compute_critical_D(N, mu=1):
+def compute_critical_D(N, mu):
     
     # Compute theta_N using the formula in the report
     cos_term = np.cos(np.pi / N)
@@ -226,7 +226,7 @@ st.write(f"### Number of Spatial Peaks in Activator A (Simulation): {num_peaks}"
 
 
 # Compute the critical diffusion coefficient for the user-defined number of peaks
-D_critical = compute_critical_D(N_target)
+D_critical = compute_critical_D(N_target, mu)
 
 # Compare simulation D_H with theoretical D_N
 st.write(f"### Stability Check for {N_target} Peaks")
