@@ -64,8 +64,6 @@ ax.grid(True)
 st.pyplot(fig)
 
 
-
-
 st.markdown("""
 ### Background
 
