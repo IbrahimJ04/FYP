@@ -220,9 +220,9 @@ st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
 
 # Display Stability Warning
 if D_H > D_critical:
-    st.warning("Turing instability is expected: patterns may form and evolve (steady state is unstable).")
+    st.success("Turing instability is expected: patterns may form and evolve (steady state is unstable).")
 else:
-    st.success("No Turing instability: the steady state is stable and no pattern formation is expected.")
+    st.warning("No Turing instability: the steady state is stable and no pattern formation is expected.")
 
 
 # Plot activator and inhibitor concentrations across space at final time step
