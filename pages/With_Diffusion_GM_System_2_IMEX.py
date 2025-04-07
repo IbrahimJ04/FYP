@@ -202,7 +202,7 @@ st.write(f"### Number of Spatial Peaks in Activator A (Simulation): {num_peaks}"
 
 # Compute the critical diffusion coefficient for the detected number of peaks
 d = D_H / D_A
-d_min = mu * (3 + 2 * np.sqrt(2))  # ≈ 5.83 * mu
+d_min = mu * (3 + 2 * np.sqrt(2))  # ≈ 5.83mu
 D_global_critical = D_A * d_min    # Convert ratio (d) to critical D_H
 
 if num_peaks == 0:
