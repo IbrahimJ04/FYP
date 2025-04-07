@@ -13,7 +13,7 @@ This interactive web application focusses on simulating and exploring **biologic
 
 ---
 
-### 🎯 Aim of the Project
+### Aim of the Project
 
 The primary aim of this project is to:
 
@@ -23,7 +23,7 @@ The primary aim of this project is to:
 """)
 
 # Turing instability visualisation
-st.markdown("### 📈 Turing Instability Threshold")
+st.markdown("### Turing Instability Threshold")
 
 st.markdown("""
 To understand when **spatial patterns** can emerge via Turing instability, we analyse the following discriminant condition:
@@ -63,13 +63,11 @@ ax.grid(True)
 # Display the plot in Streamlit
 st.pyplot(fig)
 
-         
-            
 
 
 
 st.markdown("""
-### 📘 Background
+### Background
 
 The **Gierer–Meinhardt model** describes interactions between:
 
@@ -80,7 +78,7 @@ These interactions, coupled with spatial diffusion, can lead to the emergence of
 
 ---
 
-### 📐 Gierer–Meinhardt Model Variants
+### Gierer–Meinhardt Model Variants
 
 #### GM 1 – Basic System
 $$
@@ -110,7 +108,7 @@ $$
 
 ---
 
-### 🔍 Parameter Descriptions
+### Parameter Descriptions
 
 | Parameter | Description |
 |-----------|-------------|
@@ -123,7 +121,7 @@ $$
 
 ---
 
-### 🧭 Navigation
+### Navigation
 
 Use the sidebar to:
 - Simulate each GM system numerically.
