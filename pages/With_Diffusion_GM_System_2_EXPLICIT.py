@@ -179,44 +179,41 @@ A_final = A[:, -1]  # Extract final activator concentration
 H_final = H[:, -1]  # Extract final inhibitor concentration
 num_peaks, peak_x, peak_A = count_spatial_peaks(A_final, x_vals)
 
-## Compute expected number of peaks based on theory
-#N_expected = compute_expected_peaks(D_H, x_end)
 
 # Display results
 st.write(f"### Number of Spatial Peaks in Activator A (Simulation): {num_peaks}")
 #st.write(f"### Expected Number of Peaks (Theory): {N_expected:.2f}")
 
-## Compare and provide feedback
-#if abs(num_peaks - N_expected) < 0.5:
-#    st.success("Simulation and theory are in agreement!")
-#elif num_peaks > N_expected:
-#    st.warning("Simulation shows more peaks than expected! Consider reducing D_H.")
-#elif num_peaks < N_expected:
-#    st.warning("Simulation shows fewer peaks than expected! Check initial conditions or increase D_H.")
 
 # Compute the critical diffusion coefficient for the detected number of peaks
 d = D_H / D_A
 d_min = mu * (3 + 2 * np.sqrt(2))  # ≈ 5.83 * mu
+D_global_critical = D_A * d_min    # Convert ratio (d) to critical D_H
 
 if num_peaks == 0:
     st.warning("No spatial peaks were detected — pattern formation did not occur.")
     st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
-    st.write(f"**Global Turing Threshold: D_H / D_A = {d:.2f} < {d_min:.2f} ⇒ No instability expected**")
+    st.write(f"**Global Turing Threshold (D_H > D_A · 5.83μ): {D_global_critical:.4f}**")
+    st.write(f"**D_H / D_A = {d:.2f} < {d_min:.2f} ⇒ No Turing instability expected**")
 else:
-    D_critical = compute_critical_D(num_peaks, mu)
+    # Calculate mode-specific critical D_H
+    D_critical_mode = compute_critical_D(num_peaks, mu)
 
-    # Display theoretical comparison
+    # Determine effective threshold (use the stricter of the two)
+    D_effective_critical = max(D_critical_mode, D_global_critical)
+
+    # Display both thresholds clearly
     st.write(f"### Stability Check for {num_peaks} Peaks")
-    st.write(f"**Critical D_N (Theory): {D_critical:.4f}**")
     st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
+    st.write(f"• Mode-Specific Critical D_H (from Theory for {num_peaks} peaks): {D_critical_mode:.4f}")
+    st.write(f"• Global Turing Threshold (D_H > D_A · 5.83μ): {D_global_critical:.4f}")
+    st.write(f"**Effective Critical D_H (Max of Both): {D_effective_critical:.4f}**")
 
-    # Decision logic
-    if D_H > D_critical and d > d_min:
+    # Final check and message
+    if D_H > D_effective_critical:
         st.success("Turing instability is expected: patterns may form and evolve.")
-    elif d <= d_min:
-        st.warning("Global Turing condition not satisfied: D_H / D_A < 5.83μ. No pattern should form in the long run.")
     else:
-        st.warning(f"D_H is below the critical threshold for mode N = {num_peaks}. No pattern formation expected.")
+        st.warning("No Turing instability: the steady state is stable and no pattern formation is expected.")
 
 
 
