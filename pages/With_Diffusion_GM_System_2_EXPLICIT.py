@@ -61,21 +61,9 @@ def count_spatial_peaks(A_final, x_vals):
     peaks, _ = scipy.signal.find_peaks(A_final, height=0.5)  # Adjust height threshold if needed
     return len(peaks), x_vals[peaks], A_final[peaks]  # Return peak count and peak positions
 
-## Function to compute expected number of spatial peaks in final activator concentration
-#def compute_expected_peaks(D_H, x_end, mu=1):
-#    log_factor = np.log(3 + np.sqrt(8))
-#    N_unscaled = np.sqrt((4 * mu) / (D_H * log_factor ** 2))
-#    
-#    # Rescale for the actual simulation domain
-#    N_scaled = N_unscaled * (x_end / 2)  # Adjusting for domain length
-#    
-#    return N_scaled
-
-
 
 def compute_critical_D(N, mu):
     
-    # Compute theta_N using the formula in the report
     cos_term = np.cos(np.pi / N)
     theta_N = (N / 2) * np.log(2 + cos_term + np.sqrt((2 + cos_term) ** 2 - 1))
     
@@ -125,9 +113,6 @@ H_0 = mu + 0.1 * np.sin(2 * np.pi * r * x_vals)
 # Conditionally display k and c parameters
 k = st.sidebar.number_input("Parameter k", value=1.0, min_value=0.01, step=0.01) if system == "GM 2 - With diffusion, with activator saturation" else None
 c = st.sidebar.number_input("Parameter c", value=1.0, min_value=0.01, step=0.01) if system == "GM 3 - With diffusion, with basic activator production" else None
-
-# User input for expected number of peaks
-N_target = st.sidebar.number_input("Expected Number of Peaks (N)", value=5, min_value=1, step=1)
 
 
 # Run the simulation
@@ -209,20 +194,30 @@ st.write(f"### Number of Spatial Peaks in Activator A (Simulation): {num_peaks}"
 #elif num_peaks < N_expected:
 #    st.warning("Simulation shows fewer peaks than expected! Check initial conditions or increase D_H.")
 
+# Compute the critical diffusion coefficient for the detected number of peaks
+d = D_H / D_A
+d_min = mu * (3 + 2 * np.sqrt(2))  # ≈ 5.83 * mu
 
-# Compute the critical diffusion coefficient for the user-defined number of peaks
-D_critical = compute_critical_D(N_target, mu)
-
-# Compare simulation D_H with theoretical D_N
-st.write(f"### Stability Check for {N_target} Peaks")
-st.write(f"**Critical D_N (Theory): {D_critical:.4f}**")
-st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
-
-# Display Stability Warning
-if D_H > D_critical:
-    st.success("Turing instability is expected: patterns may form and evolve.")
+if num_peaks == 0:
+    st.warning("No spatial peaks were detected — pattern formation did not occur.")
+    st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
+    st.write(f"**Global Turing Threshold: D_H / D_A = {d:.2f} < {d_min:.2f} ⇒ No instability expected**")
 else:
-    st.warning("No Turing instability: the steady state is stable and no pattern formation is expected.")
+    D_critical = compute_critical_D(num_peaks, mu)
+
+    # Display theoretical comparison
+    st.write(f"### Stability Check for {num_peaks} Peaks")
+    st.write(f"**Critical D_N (Theory): {D_critical:.4f}**")
+    st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
+
+    # Decision logic
+    if D_H > D_critical and d > d_min:
+        st.success("Turing instability is expected: patterns may form and evolve.")
+    elif d <= d_min:
+        st.warning("Global Turing condition not satisfied: D_H / D_A < 5.83μ. No pattern should form in the long run.")
+    else:
+        st.warning(f"D_H is below the critical threshold for mode N = {num_peaks}. No pattern formation expected.")
+
 
 
 # Plot activator and inhibitor concentrations across space at final time step
