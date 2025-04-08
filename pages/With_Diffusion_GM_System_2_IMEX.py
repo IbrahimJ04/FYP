@@ -83,9 +83,7 @@ def compute_critical_D(N, mu):
     
     # Compute the critical D_N
     D_N = mu / ((theta_N ** 2) + epsilon)
-    
     return D_N
-
 
 
 # Streamlit app layout
@@ -214,21 +212,47 @@ else:
     # Calculate mode-specific critical D_H
     D_critical_mode = compute_critical_D(num_peaks, mu)
 
-    # Determine effective threshold (use the stricter of the two)
-    D_effective_critical = max(D_critical_mode, D_global_critical)
-
-    # Display both thresholds clearly
     st.write(f"### Stability Check for {num_peaks} Peaks")
     st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
-    st.write(f"• Mode-Specific Critical D_H (from Theory for {num_peaks} peaks): {D_critical_mode:.4f}")
     st.write(f"• Global Turing Threshold (D_H > D_A · 5.83μ): {D_global_critical:.4f}")
-    st.write(f"**Effective Critical D_H (Max of Both): {D_effective_critical:.4f}**")
+    st.write(f"• Mode-Specific Stability Threshold (D_H < D^*_N for {num_peaks} peaks): {D_critical_mode:.4f}")
 
-    # Final check and message
-    if D_H > D_effective_critical:
-        st.success("Turing instability is expected: patterns may form and evolve.")
+    # Turing instability: based ONLY on global threshold
+    if D_H > D_global_critical:
+        st.success("Turing instability is expected: pattern formation is likely.")
     else:
-        st.warning("No Turing instability: the steady state is stable and no pattern formation is expected. Any observed peaks are seeded (from initial perturbations) not emerged.")
+        st.info("No Turing instability: the steady state is expected to remain stable.")
+
+    # Pattern stability: based on mode-specific threshold
+    if D_H > D_critical_mode:
+        st.warning("Competition (peak) instability: Pattern is likely to adjust over time.")
+    else:
+        st.success("Pattern is stable for this number of peaks.")
+
+
+    # # Calculate mode-specific critical D_H
+    # D_critical_mode = compute_critical_D(num_peaks, mu)
+
+    # # Determine effective threshold (use the stricter of the two)
+    # D_effective_critical = max(D_critical_mode, D_global_critical)
+
+    # # Display both thresholds clearly
+    # st.write(f"### Stability Check for {num_peaks} Peaks")
+    # st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
+    # st.write(f"• Mode-Specific Critical D_H (from Theory for {num_peaks} peaks): {D_critical_mode:.4f}")
+    # st.write(f"• Global Turing Threshold (D_H > D_A · 5.83μ): {D_global_critical:.4f}")
+    # st.write(f"**Effective Critical D_H (Max of Both): {D_effective_critical:.4f}**")
+
+    # # Final check and message
+    # if D_H > D_effective_critical:
+    #     st.success("Turing instability is expected: patterns may form and evolve.")
+    # else:
+    #     st.warning("No Turing instability: the steady state is stable and no pattern formation is expected. Any observed peaks are seeded (from initial perturbations) not emerged.")
+
+
+
+
+
 
 
 # Plot activator and inhibitor concentrations across space at final time step
