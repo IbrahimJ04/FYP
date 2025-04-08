@@ -77,12 +77,12 @@ def count_spatial_peaks(A_final, x_vals):
 
 
 def compute_critical_D(N, mu):
-    
+    epsilon = 1e-10
     cos_term = np.cos(np.pi / N)
     theta_N = (N / 2) * np.log(2 + cos_term + np.sqrt((2 + cos_term) ** 2 - 1))
     
     # Compute the critical D_N
-    D_N = mu / (theta_N ** 2)
+    D_N = mu / ((theta_N ** 2) + epsilon)
     
     return D_N
 
