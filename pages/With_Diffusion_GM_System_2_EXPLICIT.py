@@ -206,7 +206,7 @@ if num_peaks == 0:
     st.warning("No spatial peaks were detected in the final output.")
 
     if D_H > 10 * D_global_critical: # i.e. D_H is a lot larger than the critical value
-        st.info("Note: D_H is very large — this could indicate entry into the shadow regime, where pattern formation becomes numerically difficult to resolve.")
+        st.info("Note: D_H is very large -- this could indicate entry into the shadow problem, where pattern formation becomes numerically difficult to resolve. The solution should always show one peak (shadow problem), however this may not be seen due to numerical complications for large D_H.")
 
 
 # Plot activator and inhibitor concentrations across space at final time step
