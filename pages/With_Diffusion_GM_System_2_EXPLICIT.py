@@ -171,8 +171,6 @@ fig3.update_layout(
     yaxis_title="Concentration",
     margin=dict(t=50, b=50),
 )
-
-# Display the graph
 st.plotly_chart(fig3)
 
 
@@ -186,39 +184,29 @@ num_peaks, peak_x, peak_A = count_spatial_peaks(A_final, x_vals)
 
 # Display results
 st.write(f"### Number of Spatial Peaks in Activator A (Simulation): {num_peaks}")
-#st.write(f"### Expected Number of Peaks (Theory): {N_expected:.2f}")
-
 
 # Compute the critical diffusion coefficient for the detected number of peaks
 d = D_H / D_A
-d_min = mu * (3 + 2 * np.sqrt(2))  # ≈ 5.83mu
-D_global_critical = D_A * d_min    # Convert ratio (d) to critical D_H
+d_min = mu * (3 + 2 * np.sqrt(2))  # ≈ 5.83μ
+D_global_critical = D_A * d_min    # Global threshold for Turing instability
 
-if num_peaks == 0:
-    st.warning("No spatial peaks were detected — pattern formation did not occur.")
-    st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
-    st.write(f"**Global Turing Threshold (D_H > D_A · 5.83μ): {D_global_critical:.4f}**")
-    st.write(f"**D_H / D_A = {d:.2f} < {d_min:.2f} ⇒ No Turing instability expected**")
+# Always show theoretical prediction
+st.write("### Theoretical Turing Instability Check")
+st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
+st.write(f"**Global Turing Threshold (D_H > D_A · 5.83μ): {D_global_critical:.4f}**")
+
+if D_H > D_global_critical:
+    st.success("Turing instability condition is satisfied: pattern formation is theoretically expected.")
 else:
-    # Calculate mode-specific critical D_H
-    D_critical_mode = compute_critical_D(num_peaks, mu)
+    st.info("Turing instability condition not satisfied: the steady state is expected to remain stable (no pattern formation). If there appears to be any patterns, these are merely the initial perturbations which will eventually die out over time.")
 
-    st.write(f"### Stability Check for {num_peaks} Peaks")
-    st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
-    st.write(f"• Global Turing Threshold (D_H > D_A · 5.83μ): {D_global_critical:.4f}")
-    st.write(f"• Mode-Specific Stability Threshold (D_H < D^*_N for {num_peaks} peaks): {D_critical_mode:.4f}")
+# Simulation-based peak detection results
+st.write("\n### Simulation-Based Results")
+if num_peaks == 0:
+    st.warning("No spatial peaks were detected in the final output.")
 
-    # Turing instability: based ONLY on global threshold
-    if D_H > D_global_critical:
-        st.success("Turing instability is expected: pattern formation is likely.")
-    else:
-        st.info("No Turing instability: the steady state is expected to remain stable.")
-
-    # Pattern stability: based on mode-specific threshold
-    if D_H > D_critical_mode:
-        st.warning("Competition (peak) instability: Pattern is likely to adjust over time.")
-    else:
-        st.success("Pattern is stable for this number of peaks.")
+    if D_H > 10 * D_global_critical: # i.e. D_H is a lot larger than the critical value
+        st.info("Note: D_H is very large — this could indicate entry into the shadow regime, where pattern formation becomes numerically difficult to resolve.")
 
 
 # Plot activator and inhibitor concentrations across space at final time step
@@ -232,8 +220,6 @@ fig4.update_layout(
     xaxis_title="Space",
     yaxis_title="Concentration",
 )
-
-# Display the plot
 st.plotly_chart(fig4)
 
 
@@ -331,7 +317,6 @@ fig5 = go.Figure(
     ),
     frames=frames
 )
-
 st.plotly_chart(fig5)
 
 
