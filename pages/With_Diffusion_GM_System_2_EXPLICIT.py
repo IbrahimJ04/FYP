@@ -1,16 +1,19 @@
-import scipy.signal
-import scipy.linalg  # type: ignore
 import streamlit as st  # type: ignore
 import numpy as np  # type: ignore
 import plotly.graph_objs as go  # type: ignore
+import scipy.signal
+# For solving linear systems
+import scipy.linalg  # type: ignore
+
 
 # Define GM System with np.roll for periodic boundary conditions
-def forward_euler_gm_system2_np_roll(system, T, A_0, H_0, delta_t, delta_x, t_end, x_end, D_A, D_H, k=None, c=None):
+def ftcs_gm_system_with_diffusion(system, T, A_0, H_0, delta_t, delta_x, t_end, x_end, D_A, D_H, k=None, c=None):
     epsilon = 1e-10  # Small value to avoid division by zero
+
     N_t = int(t_end / delta_t) + 1  # Number of time steps
     N_x = int(x_end / delta_x)      # Number of spatial points
 
-    # Initialise concentration arrays (2D)
+    # Initialise arrays
     A = np.zeros((N_x, N_t))
     H = np.zeros((N_x, N_t))
 
@@ -23,19 +26,20 @@ def forward_euler_gm_system2_np_roll(system, T, A_0, H_0, delta_t, delta_x, t_en
     if delta_t > delta_x**2 / (2 * max_D):
         st.warning(f"Time step (delta_t) is too large for stability. Reduce it to less than {delta_x**2 / (2 * max_D):.5f}")
 
-    # Forward Euler method with np.roll for periodic boundary conditions
-    for n in range(N_t - 1):  # Iterate over time --> 'for x in range(3) --> gives (0, 1, 2)'
-        # Apply periodic boundary conditions using np.roll
+    # Forward-Time Central-Space (FTCS) method
+    for n in range(N_t - 1):  # Iterate over time --> 'for n in range(3) --> gives (0, 1, 2)'
+        
+        # Apply periodic boundary conditions using 'np.roll'
         A_left = np.roll(A[:, n], 1)   # Left neighbour
         A_right = np.roll(A[:, n], -1) # Right neighbour
         H_left = np.roll(H[:, n], 1)   # Left neighbour
         H_right = np.roll(H[:, n], -1) # Right neighbour
 
-        # Laplacians calculated using Central Finite Difference Approximation Method
+        # Laplacians calculated using Central Finite Difference Approximation
         A_xx = (A_right - 2 * A[:, n] + A_left) / delta_x**2
         H_xx = (H_right - 2 * H[:, n] + H_left) / delta_x**2
 
-        # Update based on the selected GM system
+
         if system == "GM 1 - With diffusion":
             A[:, n + 1] = A[:, n] + delta_t * (D_A * A_xx - A[:, n] + (A[:, n]**2) / (H[:, n] + epsilon))
             H[:, n + 1] = H[:, n] + delta_t * (D_H * H_xx - mu*H[:, n] + A[:, n]**2 / T)
@@ -48,9 +52,9 @@ def forward_euler_gm_system2_np_roll(system, T, A_0, H_0, delta_t, delta_x, t_en
             A[:, n + 1] = A[:, n] + delta_t * (D_A * A_xx - A[:, n] + (A[:, n]**2) / (H[:, n] + epsilon) + c)
             H[:, n + 1] = H[:, n] + delta_t * (D_H * H_xx - mu*H[:, n] + A[:, n]**2 / T)
 
-        # Check for overflow or invalid values
+        # Check for invalid values
         if np.any(np.isnan(A[:, n + 1])) or np.any(np.isnan(H[:, n + 1])):
-            st.error("Simulation encountered invalid values. Adjust parameters or reduce time step.")
+            st.error("Simulation encountered invalid values. Adjust parameters.")
             break
 
     return A, H, np.linspace(0, x_end, N_x), np.linspace(0, t_end, N_t)
@@ -59,22 +63,25 @@ def forward_euler_gm_system2_np_roll(system, T, A_0, H_0, delta_t, delta_x, t_en
 # Function to count spatial peaks in final activator concentration
 def count_spatial_peaks(A_final, x_vals):
     peaks, _ = scipy.signal.find_peaks(A_final, height=0.5)  # Adjust height threshold if needed
+    
     return len(peaks), x_vals[peaks], A_final[peaks]  # Return peak count and peak positions
 
 
+# Function that calulates expected D_H value for a graph with N peaks
 def compute_critical_D(N, mu):
     epsilon = 1e-10
     cos_term = np.cos(np.pi / N)
     theta_N = (N / 2) * np.log(2 + cos_term + np.sqrt((2 + cos_term) ** 2 - 1))
     
-    # Compute the critical D_N
-    D_N = mu / ((theta_N ** 2) + epsilon)
+    # Compute the critical D_N_star
+    D_N_star = mu / ((theta_N ** 2) + epsilon)
     
-    return D_N
+    return D_N_star
 
 
 
-# Streamlit app layout
+
+## Streamlit app layout
 st.title("GM System with Diffusion")
 
 # Sidebar for user inputs
@@ -90,17 +97,15 @@ system = st.sidebar.selectbox(
     ]
 )
 
-# Parameters input
+# Parameter inputs
 T = st.sidebar.number_input("Reaction time constant (τ)", value=1.11, min_value=0.01, step=0.01)
 delta_t = st.sidebar.number_input("Time step (Δt)", value=0.004, min_value=0.0001, step=0.001, format="%.3f")
 delta_x = st.sidebar.number_input("Space step (Δx)", value=0.1, min_value=0.01, step=0.01)
 t_end = st.sidebar.number_input("End time", value=25.0, min_value=0.01, step=0.1)
 x_end = st.sidebar.number_input("End space", value=10.0, min_value=0.01, step=0.1)
-D_A = st.sidebar.number_input("Diffusion coefficient for A", value=0.01, min_value=0.0, step=0.01)
-D_H = st.sidebar.number_input("Diffusion coefficient for H", value=1.0, min_value=0.0, step=0.01)
+D_A = st.sidebar.number_input("Diffusion coefficient for A", value=0.01, min_value=0.0, step=0.001)
+D_H = st.sidebar.number_input("Diffusion coefficient for H", value=1.0, min_value=0.0, step=0.001)
 mu = st.sidebar.number_input("Inhibitor decay rate (μ)", value=1, min_value=1, step=1)
-
-# Input for r (positive integer for sinusoidal perturbation)
 r = st.sidebar.number_input("Integer r for initial condition", value=1, min_value=1, step=1)
 
 # Generate spatial variable x
@@ -111,18 +116,18 @@ A_0 = mu + 0.1 * np.sin(2 * np.pi * r * x_vals)
 H_0 = mu + 0.1 * np.sin(2 * np.pi * r * x_vals)
 
 # Conditionally display k and c parameters
-k = st.sidebar.number_input("Parameter k", value=1.0, min_value=0.01, step=0.01) if system == "GM 2 - With diffusion, with activator saturation" else None
-c = st.sidebar.number_input("Parameter c", value=1.0, min_value=0.01, step=0.01) if system == "GM 3 - With diffusion, with basic activator production" else None
-
+k = st.sidebar.number_input("Parameter k", value=0.01, min_value=0.01, step=0.01) if system == "GM 2 - With diffusion, with activator saturation" else None
+c = st.sidebar.number_input("Parameter c", value=0.01, min_value=0.01, step=0.01) if system == "GM 3 - With diffusion, with basic activator production" else None
 
 # Run the simulation
-A, H, x_vals, t_vals = forward_euler_gm_system2_np_roll(system, T, A_0, H_0, delta_t, delta_x, t_end, x_end, D_A, D_H, k, c)
+A, H, x_vals, t_vals = ftcs_gm_system_with_diffusion(system, T, A_0, H_0, delta_t, delta_x, t_end, x_end, D_A, D_H, k, c)
+
 
 
 
 # PLOTS
 
-# 1. Plot 3D Surface Plot for Activator A over Space and Time
+# 1. 3D Surface Plot for Activator A over Space and Time
 fig1 = go.Figure(data=[go.Surface(z=A, x=t_vals, y=x_vals, colorscale="Earth")])
 fig1.update_layout(title="3D Surface Plot of Activator (A)", scene=dict(
     xaxis_title="Time",
@@ -132,7 +137,8 @@ fig1.update_layout(title="3D Surface Plot of Activator (A)", scene=dict(
 st.plotly_chart(fig1)
 
 
-# 2. Plot 3D Surface Plot for Inhibitor H over Space and Time
+
+# 2. 3D Surface Plot for Inhibitor H over Space and Time
 fig2 = go.Figure(data=[go.Surface(z=H, x=t_vals, y=x_vals, colorscale="Earth")])
 fig2.update_layout(title="3D Surface Plot of Inhibitor (H)", scene=dict(
     xaxis_title="Time",
@@ -142,9 +148,8 @@ fig2.update_layout(title="3D Surface Plot of Inhibitor (H)", scene=dict(
 st.plotly_chart(fig2)
 
 
-# 3. Plot Line Plot Over Time at a Fixed Spatial Location
 
-# Sidebar: Set the spatial location using a slider
+# 3. Line Plot Over Time at a Fixed Spatial Location
 fixed_location = st.slider(
     "Select Spatial Location (Index):", 
     min_value=0, 
@@ -156,7 +161,7 @@ fixed_location = st.slider(
 # Display the corresponding spatial point
 selected_spatial_point = x_vals[fixed_location]
 
-# Plot Line Plot Over Time at the Selected Spatial Location
+# Line Plot Over Time at the Selected Spatial Location
 fig3 = go.Figure()
 fig3.add_trace(go.Scatter(x=t_vals, y=A[fixed_location, :], mode='lines', name='Activator A', line=dict(color='blue')))
 fig3.add_trace(go.Scatter(x=t_vals, y=H[fixed_location, :], mode='lines', name='Inhibitor H', line=dict(color='orange')))
@@ -164,7 +169,7 @@ fig3.update_layout(
     title=f"Concentration Over Time at Spatial Location: {selected_spatial_point:.2f}",
     xaxis_title="Time",
     yaxis_title="Concentration",
-    margin=dict(t=50, b=50),  # Adjust margins to make space for the slider
+    margin=dict(t=50, b=50),
 )
 
 # Display the graph
@@ -173,7 +178,6 @@ st.plotly_chart(fig3)
 
 
 # 4. Count peaks in final activator concentration
-
 # Compute peaks and compare with theory
 A_final = A[:, -1]  # Extract final activator concentration
 H_final = H[:, -1]  # Extract final inhibitor concentration
@@ -199,22 +203,22 @@ else:
     # Calculate mode-specific critical D_H
     D_critical_mode = compute_critical_D(num_peaks, mu)
 
-    # Determine effective threshold (use the stricter of the two)
-    D_effective_critical = max(D_critical_mode, D_global_critical)
-
-    # Display both thresholds clearly
     st.write(f"### Stability Check for {num_peaks} Peaks")
     st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
-    st.write(f"• Mode-Specific Critical D_H (from Theory for {num_peaks} peaks): {D_critical_mode:.4f}")
     st.write(f"• Global Turing Threshold (D_H > D_A · 5.83μ): {D_global_critical:.4f}")
-    st.write(f"**Effective Critical D_H (Max of Both): {D_effective_critical:.4f}**")
+    st.write(f"• Mode-Specific Stability Threshold (D_H < D^*_N for {num_peaks} peaks): {D_critical_mode:.4f}")
 
-    # Final check and message
-    if D_H > D_effective_critical:
-        st.success("Turing instability is expected: patterns may form and evolve.")
+    # Turing instability: based ONLY on global threshold
+    if D_H > D_global_critical:
+        st.success("Turing instability is expected: pattern formation is likely.")
     else:
-        st.warning("No Turing instability: the steady state is stable and no pattern formation is expected. Any observed peaks are seeded (from initial perturbations) not emerged.")
+        st.info("No Turing instability: the steady state is expected to remain stable.")
 
+    # Pattern stability: based on mode-specific threshold
+    if D_H > D_critical_mode:
+        st.warning("Competition (peak) instability: Pattern is likely to adjust over time.")
+    else:
+        st.success("Pattern is stable for this number of peaks.")
 
 
 # Plot activator and inhibitor concentrations across space at final time step
@@ -223,7 +227,6 @@ fig4.add_trace(go.Scatter(x=x_vals, y=A_final, mode="lines", name="Activator A",
 fig4.add_trace(go.Scatter(x=x_vals, y=H_final, mode="lines", name="Inhibitor H", line=dict(color='orange')))
 fig4.add_trace(go.Scatter(x=peak_x, y=peak_A, mode="markers", name="Detected Peaks", marker=dict(color='red', size=8)))
 
-# Update layout
 fig4.update_layout(
     title="Final Activator and Inhibitor Concentrations with Detected Peaks",
     xaxis_title="Space",
@@ -234,33 +237,9 @@ fig4.update_layout(
 st.plotly_chart(fig4)
 
 
-### Without inhibitor concentration on graph: ###
-
-## 4. Count peaks in final activator concentration
-
-#A_final = A[:, -1]
-#num_peaks, peak_x, peak_A = count_spatial_peaks(A_final, x_vals)
-
-## Display the number of peaks
-#st.write(f"### Number of Spatial Peaks in Activator A: {num_peaks}")
-
-## Plot activator concentration across space at final time step
-#fig4 = go.Figure()
-#fig4.add_trace(go.Scatter(x=x_vals, y=A_final, mode="lines", name="Activator A", line=dict(color='blue')))
-#fig4.add_trace(go.Scatter(x=peak_x, y=peak_A, mode="markers", name="Detected Peaks", marker=dict(color='red', size=8)))
-#fig4.update_layout(
-#    title="Final Activator Concentration with Detected Peaks",
-#    xaxis_title="Space",
-#    yaxis_title="Activator A Concentration",
-#)
-#st.plotly_chart(fig4)
-
-
 
 # 5. Animation Over Time Showing Concentration Across Space
-
-# Adjust animation speed
-frame_duration = 0.1  # Reduced frame duration for quicker animation (in milliseconds)
+frame_duration = 0.1 # Adjust animation speed
 
 # Animation Over Time Showing Concentration Across Space
 frames = [
@@ -272,14 +251,14 @@ frames = [
             # Inhibitor H line plot
             go.Scatter(x=x_vals, y=H[:, i], mode="lines", name="Inhibitor H", line=dict(color='orange')),
 
-            # Marker for selected spatial point for Activator A with black outline
+            # Marker for selected spatial point for Activator A
             go.Scatter(
                 x=[selected_spatial_point], y=[A[fixed_location, i]], mode="markers",
                 marker=dict(size=7, color="red", symbol="circle", line=dict(color="black", width=1)),
                 name=f"Spatial Point = {selected_spatial_point:.2f} (Activator A) at t = {t_vals[i]:.2f}"
             ),
 
-            # Marker for selected spatial point for Inhibitor H with black outline
+            # Marker for selected spatial point for Inhibitor H
             go.Scatter(
                 x=[selected_spatial_point], y=[H[fixed_location, i]], mode="markers",
                 marker=dict(size=7, color="rgb(0, 204, 204)", symbol="circle", line=dict(color="black", width=1)),
@@ -301,11 +280,11 @@ frames = [
 
 fig5 = go.Figure(
     data=[
-        # Initial Activator A and Inhibitor H lines at t=0
+        # Activator A and Inhibitor H lines at t=0
         go.Scatter(x=x_vals, y=A[:, 0], mode="lines", name="Activator A", line=dict(color='blue')),
         go.Scatter(x=x_vals, y=H[:, 0], mode="lines", name="Inhibitor H", line=dict(color='orange')),
 
-        # Initial markers for selected spatial points (at t=0) for both A and H
+        # Markers for selected spatial points (at t=0) for both A and H
         go.Scatter(
             x=[selected_spatial_point], y=[A[fixed_location, 0]], mode="markers",
             marker=dict(size=7, color="red", symbol="circle", line=dict(color="black", width=1)),
@@ -353,7 +332,6 @@ fig5 = go.Figure(
     frames=frames
 )
 
-# Display the figure
 st.plotly_chart(fig5)
 
 
