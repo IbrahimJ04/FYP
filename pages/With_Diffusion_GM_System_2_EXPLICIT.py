@@ -188,14 +188,14 @@ st.write(f"### Number of Spatial Peaks in Activator A (Simulation): {num_peaks}"
 # Compute the critical diffusion coefficient for the detected number of peaks
 d = D_H / D_A
 d_min = mu * (3 + 2 * np.sqrt(2))  # ≈ 5.83μ
-D_global_critical = D_A * d_min    # Global threshold for Turing instability
+D_H_critical = D_A * d_min    # Global threshold for Turing instability
 
 # Always show theoretical prediction
 st.write("### Theoretical Turing Instability Check")
 st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
-st.write(f"**Global Turing Threshold (D_H > D_A · 5.83μ): {D_global_critical:.4f}**")
+st.write(f"**Global Turing Threshold (D_H > D_A · 5.83μ): {D_H_critical:.4f}**")
 
-if D_H > D_global_critical:
+if D_H > D_H_critical:
     st.success("Turing instability condition is satisfied: pattern formation is theoretically expected.")
 else:
     st.info("Turing instability condition not satisfied: the steady state is expected to remain stable (no pattern formation). If there appears to be any patterns, these are merely the initial perturbations which will eventually die out over time.")
@@ -205,8 +205,8 @@ st.write("\n### Simulation-Based Results")
 if num_peaks == 0:
     st.warning("No spatial peaks were detected in the final output.")
 
-    if D_H > 10 * D_global_critical: # i.e. D_H is a lot larger than the critical value
-        st.info("Note: D_H is very large -- this could indicate entry into the shadow problem, where pattern formation becomes numerically difficult to resolve. The solution should always show one peak (shadow problem), however this may not be seen due to numerical complications for large D_H.")
+    if D_H > 10 * D_H_critical: # i.e. D_H is a lot larger than the critical value
+        st.info("Note: For very large D_H the solution should always show one peak (according to the shadow problem), however this may not be seen due to numerical complications for large D_H. Try decreasing the spatial step size (Δx).")
 
 
 # Plot activator and inhibitor concentrations across space at final time step
