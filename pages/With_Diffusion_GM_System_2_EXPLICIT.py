@@ -67,16 +67,18 @@ def count_spatial_peaks(A_final, x_vals):
     return len(peaks), x_vals[peaks], A_final[peaks]  # Return peak count and peak positions
 
 
-# Function that calulates expected D_H value for a graph with N peaks
-def compute_critical_D(N, mu):
+# D_N_star equation from paper titled: 'The Stability of Spike Solutions to the One-Dimensional' --> Eqn. (4.65)
+def expected_peak_count(D_H, mu, N_max=100):
     epsilon = 1e-10
-    cos_term = np.cos(np.pi / N)
-    theta_N = (N / 2) * np.log(2 + cos_term + np.sqrt((2 + cos_term) ** 2 - 1))
-    
-    # Compute the critical D_N_star
-    D_N_star = mu / ((theta_N ** 2) + epsilon)
-    
-    return D_N_star
+    for N in range(1, N_max + 1):
+        cos_term = np.cos(np.pi / N)
+        theta_N = (N / 2) * np.log(2 + cos_term + np.sqrt((2 + cos_term) ** 2 - 1))
+        D_N_star = mu / ((theta_N ** 2) + epsilon)
+
+        if D_H >= D_N_star:
+            return max(1, N - 1)  # Previous N was the last valid one
+
+    return N_max  # If D_H < D_N_star even at max N
 
 
 
@@ -105,7 +107,7 @@ t_end = st.sidebar.number_input("End time", value=25.0, min_value=0.01, step=0.1
 x_end = st.sidebar.number_input("End space", value=10.0, min_value=0.01, step=0.1)
 D_A = st.sidebar.number_input("Diffusion coefficient for A", value=0.01, min_value=0.0, step=0.001)
 D_H = st.sidebar.number_input("Diffusion coefficient for H", value=1.0, min_value=0.0, step=0.001)
-mu = st.sidebar.number_input("Inhibitor decay rate (μ)", value=1, min_value=1, step=1)
+mu = st.sidebar.number_input("Inhibitor decay rate (μ)", value=1.0, min_value=0.01, step=0.01)
 r = st.sidebar.number_input("Integer r for initial condition", value=1, min_value=1, step=1)
 
 # Generate spatial variable x
@@ -125,9 +127,13 @@ A, H, x_vals, t_vals = ftcs_gm_system_with_diffusion(system, T, A_0, H_0, delta_
 
 
 
-# PLOTS
+### PLOTS ###
 
 # 1. 3D Surface Plot for Activator A over Space and Time
+st.markdown("""
+---
+""")
+
 fig1 = go.Figure(data=[go.Surface(z=A, x=t_vals, y=x_vals, colorscale="Earth")])
 fig1.update_layout(title="3D Surface Plot of Activator (A)", scene=dict(
     xaxis_title="Time",
@@ -139,6 +145,10 @@ st.plotly_chart(fig1)
 
 
 # 2. 3D Surface Plot for Inhibitor H over Space and Time
+st.markdown("""
+---
+""")
+
 fig2 = go.Figure(data=[go.Surface(z=H, x=t_vals, y=x_vals, colorscale="Earth")])
 fig2.update_layout(title="3D Surface Plot of Inhibitor (H)", scene=dict(
     xaxis_title="Time",
@@ -150,6 +160,10 @@ st.plotly_chart(fig2)
 
 
 # 3. Line Plot Over Time at a Fixed Spatial Location
+st.markdown("""
+---
+""")
+
 fixed_location = st.slider(
     "Select Spatial Location (Index):", 
     min_value=0, 
@@ -176,36 +190,36 @@ st.plotly_chart(fig3)
 
 
 # 4. Count peaks in final activator concentration
+st.markdown("""
+---
+""")
+
 # Compute peaks and compare with theory
 A_final = A[:, -1]  # Extract final activator concentration
 H_final = H[:, -1]  # Extract final inhibitor concentration
 num_peaks, peak_x, peak_A = count_spatial_peaks(A_final, x_vals)
 
 
-# Display results
-st.write(f"### Number of Spatial Peaks in Activator A (Simulation): {num_peaks}")
-
 # Compute the critical diffusion coefficient for the detected number of peaks
 d = D_H / D_A
 d_min = mu * (3 + 2 * np.sqrt(2))  # ≈ 5.83μ
-D_H_critical = D_A * d_min    # Global threshold for Turing instability
+D_H_turing = D_A * d_min    # Global threshold for Turing instability
 
-# Always show theoretical prediction
-st.write("### Theoretical Turing Instability Check")
-st.write(f"**Current D_H (Simulation): {D_H:.4f}**")
-st.write(f"**Global Turing Threshold (D_H > D_A · 5.83μ): {D_H_critical:.4f}**")
+st.write("#### Theoretical Turing Instability Check")
+st.write(f"###### • Current D_H (Simulation): {D_H:.4f}")
+st.write(f"###### • Global Turing Threshold (D_H > D_A · 5.83μ): {D_H_turing:.4f}")
 
-if D_H > D_H_critical:
+
+if D_H > D_H_turing:
     st.success("Turing instability condition is satisfied: pattern formation is theoretically expected.")
 else:
     st.info("Turing instability condition not satisfied: the steady state is expected to remain stable (no pattern formation). If there appears to be any patterns, these are merely the initial perturbations which will eventually die out over time.")
 
 # Simulation-based peak detection results
-st.write("\n### Simulation-Based Results")
 if num_peaks == 0:
     st.warning("No spatial peaks were detected in the final output.")
 
-    if D_H > 10 * D_H_critical: # i.e. D_H is a lot larger than the critical value
+    if D_H > 10 * D_H_turing: # i.e. D_H is a lot larger than the critical value
         st.info("Note: For very large D_H the solution should always show one peak (according to the shadow problem), however this may not be seen due to numerical complications for large D_H. Try decreasing the spatial step size (Δx).")
 
 
@@ -223,8 +237,26 @@ fig4.update_layout(
 st.plotly_chart(fig4)
 
 
+expected_N = expected_peak_count(D_H, mu)
+st.write(f"###### • Number of Spatial Peaks in Activator A (Simulation): {num_peaks}")
+st.write(f"###### • Theoretical number of stable peaks expected (from equation below): {expected_N}")
+
+
+st.markdown("**Estimating expected number of peaks** $N$ **given** $D_H$:")
+st.latex(r"""
+\text{Find the largest } N \text{ such that } D_H < D_N^* = \frac{\mu}{\theta_N^2}
+""")
+st.latex(r"""
+\theta_N = \frac{N}{2} \cdot \ln\left( 2 + \cos\left( \frac{\pi}{N} \right) + \sqrt{\left( 2 + \cos\left( \frac{\pi}{N} \right) \right)^2 - 1} \right)
+""")
+
+
 
 # 5. Animation Over Time Showing Concentration Across Space
+st.markdown("""
+---
+""")
+
 frame_duration = 0.1 # Adjust animation speed
 
 # Animation Over Time Showing Concentration Across Space

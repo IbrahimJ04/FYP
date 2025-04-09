@@ -83,6 +83,10 @@ A, H, t = without_diffusion_gm_system1(system, T, A_0, H_0, delta_t, t_end, k, c
 ### PLOTS ###
 
 # 1. Plot H vs A
+st.markdown("""
+---
+""")
+
 fig1 = go.Figure()
 fig1.add_trace(go.Scatter(x=A, y=H, mode='lines', name='A vs H', line=dict(color='green')))
 fig1.add_trace(go.Scatter(x=[0], y=[0], mode='markers', name='(0, 0)', marker=dict(color='blue')))
@@ -101,6 +105,10 @@ st.plotly_chart(fig1)
 
 
 # 2. Plot t vs A and H
+st.markdown("""
+---
+""")
+
 fig2 = go.Figure()
 fig2.add_trace(go.Scatter(x=t, y=A, mode='lines', name='Activator A', line=dict(color='blue')))
 fig2.add_trace(go.Scatter(x=t, y=H, mode='lines', name='Inhibitor H', line=dict(color='orange')))

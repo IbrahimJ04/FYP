@@ -69,7 +69,7 @@ $$
 |-----------|-------------|
 | **$$ A, H $$** | Activator and inhibitor concentrations |
 | **$$ D_A, D_H $$** | Diffusion coefficients for activator and inhibitor |
-| **$$ \\tau $$** | Inhibitor response time |
+| **$$ \\tau $$** | Activator response time |
 | **$$ \\mu $$** | Inhibitor decay rate |
 | **$$ k $$** | Saturation constant (GM 2 only) |
 | **$$ c $$** | Constant activator production (GM 3 only) |
