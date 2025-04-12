@@ -115,7 +115,7 @@ system = st.sidebar.selectbox(
 )
 
 # Parameter inputs
-T = st.sidebar.number_input("Reaction time constant (τ)", value=1.11, min_value=0.01, step=0.01)
+T = st.sidebar.number_input("Inhibitor response time (τ)", value=1.11, min_value=0.01, step=0.01)
 delta_t = st.sidebar.number_input("Time step (Δt)", value=0.05, min_value=0.0001, step=0.0001, format="%.3f")
 delta_x = st.sidebar.number_input("Space step (Δx)", value=0.1, min_value=0.01, step=0.01)
 t_end = st.sidebar.number_input("End time", value=50.0, min_value=0.01, step=0.1)
