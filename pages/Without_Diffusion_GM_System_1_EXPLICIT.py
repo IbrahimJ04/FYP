@@ -55,12 +55,12 @@ system = st.sidebar.selectbox(
 )
 
 # Parameters input
-T = st.sidebar.number_input("Inhibitor response time (τ)", value=1.11, min_value=0.01, step=0.01)
+T = st.sidebar.number_input("Inhibitor response time (τ)", value=1, min_value=0.20, max_value = 10.0, step=0.01)
 A_0 = st.sidebar.number_input("Initial condition for A", value=0.9, min_value=0.0, step=0.01)
 H_0 = st.sidebar.number_input("Initial condition for H", value=0.9, min_value=0.0, step=0.01)
 delta_t = st.sidebar.number_input("Time step (Δt)", value=0.001, min_value=0.0001, step=0.0001)
 t_end = st.sidebar.number_input("End time", value=100.0, min_value=0.01, step=0.1)
-mu = st.sidebar.number_input("Inhibitor decay rate (μ)", value=1, min_value=1, step=1)
+mu = st.sidebar.number_input("Inhibitor decay rate (μ)", value=1.0, min_value=0.2, max_value = 10.0, step=0.01)
 
 # Only show k and c parameters if they apply to the selected system
 if system == "GM 2 - Without diffusion, with activator saturation":
