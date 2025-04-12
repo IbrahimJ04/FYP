@@ -68,18 +68,17 @@ def count_spatial_peaks(A_final, x_vals):
 
 
 # D_N_star equation from paper titled: 'The Stability of Spike Solutions to the One-Dimensional' --> Eqn. (4.65)
-def expected_peak_count(D_H, mu, N_max=100):
+def expected_peak_count(D_H, mu, x_end, N_max=100):
     epsilon = 1e-10
     for N in range(1, N_max + 1):
-        cos_term = np.cos(np.pi / N)
-        theta_N = (N / 2) * np.log(2 + cos_term + np.sqrt((2 + cos_term) ** 2 - 1))
-        D_N_star = mu / ((theta_N ** 2) + epsilon)
+
+        theta_N = N * np.log(1 + np.sqrt(2))
+        D_N_star = mu / ((theta_N ** 2) + epsilon) # This equation is for a domain of length 2. 
 
         if D_H >= D_N_star:
-            return max(1, N - 1)  # Previous N was the last valid one
+            return (max(1, N - 1) * (x_end/2))  # Previous N was the last valid one
 
-    return N_max  # If D_H < D_N_star even at max N
-
+    return (N_max * (x_end/2))  # If D_H < D_N_star even at max N
 
 
 
@@ -100,14 +99,14 @@ system = st.sidebar.selectbox(
 )
 
 # Parameter inputs
-T = st.sidebar.number_input("Inhibitor response time (τ)", value=1.0, min_value=0.20, max_value = 10.0, step=0.01)
-delta_t = st.sidebar.number_input("Time step (Δt)", value=0.004, min_value=0.0001, step=0.001, format="%.3f")
+T = st.sidebar.number_input("Inhibitor response time (τ)", value=1.0, min_value=0.20, max_value = 10.0, step=0.1)
+delta_t = st.sidebar.number_input("Time step (Δt)", value=0.004, min_value=0.0001, step=0.0001, format="%.3f")
 delta_x = st.sidebar.number_input("Space step (Δx)", value=0.1, min_value=0.01, step=0.01)
 t_end = st.sidebar.number_input("End time", value=25.0, min_value=0.01, step=0.1)
 x_end = st.sidebar.number_input("End space", value=10.0, min_value=0.01, step=0.1)
 D_A = st.sidebar.number_input("Diffusion coefficient for A", value=0.01, min_value=0.0, step=0.001)
 D_H = st.sidebar.number_input("Diffusion coefficient for H", value=1.0, min_value=0.0, step=0.001)
-mu = st.sidebar.number_input("Inhibitor decay rate (μ)", value=1.0, min_value=0.2, max_value = 10.0, step=0.01)
+mu = st.sidebar.number_input("Inhibitor decay rate (μ)", value=1.0, min_value=0.2, max_value = 10.0, step=0.1)
 r = st.sidebar.number_input("Integer r for initial condition", value=1, min_value=1, step=1)
 
 # Generate spatial variable x
@@ -237,9 +236,9 @@ fig4.update_layout(
 st.plotly_chart(fig4)
 
 
-expected_N = expected_peak_count(D_H, mu)
+expected_N = expected_peak_count(D_H, mu, x_end)
 st.write(f"###### • Number of Spatial Peaks in Activator A (Simulation): {num_peaks}")
-st.write(f"###### • Theoretical number of stable peaks expected (from equation below): {expected_N}")
+st.write(f"###### • Maximum number of stable peaks expected (from equation below): {expected_N}")
 
 
 st.markdown("**Estimating expected number of peaks** $N$ **given** $D_H$:")
@@ -247,7 +246,7 @@ st.latex(r"""
 \text{Find the largest } N \text{ such that } D_H < D_N^* = \frac{\mu}{\theta_N^2}
 """)
 st.latex(r"""
-\theta_N = \frac{N}{2} \cdot \ln\left( 2 + \cos\left( \frac{\pi}{N} \right) + \sqrt{\left( 2 + \cos\left( \frac{\pi}{N} \right) \right)^2 - 1} \right)
+\theta_N = N \cdot \ln\left(1 + \sqrt{2} \right)
 """)
 
 
