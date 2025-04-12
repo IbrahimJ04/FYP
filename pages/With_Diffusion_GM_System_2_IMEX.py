@@ -89,7 +89,7 @@ def expected_peak_count(D_H, mu, N_max=100):
         # theta_N = (N / 2) * np.log(2 + cos_term + np.sqrt((2 + cos_term) ** 2 - 1))
         # D_N_star = mu / ((theta_N ** 2) + epsilon)
 
-        theta_N = N * np.log(1 + np.sqrt(2))
+        theta_N = 5 * N * np.log(1 + np.sqrt(2))
         D_N_star = mu / ((theta_N ** 2) + epsilon)
 
         if D_H >= D_N_star:
