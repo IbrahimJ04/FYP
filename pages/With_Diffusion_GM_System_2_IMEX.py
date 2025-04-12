@@ -85,8 +85,11 @@ def count_spatial_peaks(A_final, x_vals):
 def expected_peak_count(D_H, mu, N_max=100):
     epsilon = 1e-10
     for N in range(1, N_max + 1):
-        cos_term = np.cos(np.pi / N)
-        theta_N = (N / 2) * np.log(2 + cos_term + np.sqrt((2 + cos_term) ** 2 - 1))
+        # cos_term = np.cos(np.pi / N)
+        # theta_N = (N / 2) * np.log(2 + cos_term + np.sqrt((2 + cos_term) ** 2 - 1))
+        # D_N_star = mu / ((theta_N ** 2) + epsilon)
+
+        theta_N = N * np.log(1 + np.sqrt(2))
         D_N_star = mu / ((theta_N ** 2) + epsilon)
 
         if D_H >= D_N_star:
