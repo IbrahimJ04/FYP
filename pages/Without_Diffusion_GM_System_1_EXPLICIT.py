@@ -55,7 +55,7 @@ system = st.sidebar.selectbox(
 )
 
 # Parameters input
-T = st.sidebar.number_input("Inhibitor response time (τ)", value=1, min_value=0.20, max_value = 10.0, step=0.01)
+T = st.sidebar.number_input("Inhibitor response time (τ)", value=1.0, min_value=0.20, max_value = 10.0, step=0.01)
 A_0 = st.sidebar.number_input("Initial condition for A", value=0.9, min_value=0.0, step=0.01)
 H_0 = st.sidebar.number_input("Initial condition for H", value=0.9, min_value=0.0, step=0.01)
 delta_t = st.sidebar.number_input("Time step (Δt)", value=0.001, min_value=0.0001, step=0.0001)
