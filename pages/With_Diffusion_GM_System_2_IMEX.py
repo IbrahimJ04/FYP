@@ -84,6 +84,7 @@ def count_spatial_peaks(A_final, x_vals):
 # D_N_star equation from paper titled: 'The Stability of Spike Solutions to the One-Dimensional' --> Eqn. (4.65)
 def expected_peak_count(D_H, mu, x_end, N_max=100):
     epsilon = 1e-10
+    
     for N in range(1, N_max + 1):
 
         theta_N = N * np.log(1 + np.sqrt(2))
