@@ -90,7 +90,7 @@ st.markdown("""
 fig1 = go.Figure()
 fig1.add_trace(go.Scatter(x=A, y=H, mode='lines', name='A vs H', line=dict(color='green')))
 fig1.add_trace(go.Scatter(x=[0], y=[0], mode='markers', name='(0, 0)', marker=dict(color='blue')))
-fig1.add_trace(go.Scatter(x=[1], y=[1], mode='markers', name='(1, 1)', marker=dict(color='red')))
+fig1.add_trace(go.Scatter(x=[mu], y=[mu], mode='markers', name=f'({mu:.2f}, {mu:.2f})', marker=dict(color='red')))
 fig1.add_trace(go.Scatter(x=[A[0]], y=[H[0]], mode='markers', name= f'Initial Point - ({A[0]:.2f}, {H[0]:.2f})', marker=dict(color='yellow')))
 fig1.add_trace(go.Scatter(x=[A[-1]], y=[H[-1]], mode='markers', name=f'End Point - ({A[-1]:.2f}, {H[-1]:.2f})', marker=dict(color='purple')))
 
