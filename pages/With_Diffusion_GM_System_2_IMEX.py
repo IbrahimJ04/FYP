@@ -51,7 +51,7 @@ def imex_gm_system_with_diffusion(system, T, A_0, H_0, delta_t, delta_x, t_end, 
             b_H = H_old + delta_t * ((-mu*H_old + A_old**2) / T)
         elif system == "GM 3 - With diffusion, with basic activator production" and c is not None:
             b_A = A_old + delta_t * (-A_old + (A_old**2) / (H_old + epsilon) + c)
-            b_H = H_old + delta_t * ((-mu*H_old + A_old**2) / T)
+            b_H = H_old + delta_t * (((-mu*H_old + A_old**2)+epsilon) / T)
         else:
             st.error("Invalid system configuration or missing parameters.")
             break
