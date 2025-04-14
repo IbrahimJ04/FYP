@@ -128,3 +128,6 @@ Use the sidebar to:
 
 ---
 """)
+
+
+st.info("NOTE: 'With Diffusion GM System 2 EXPLICIT' is more computationally costly due to the numerical method used to implement it. Instead, you can use 'With Diffusion GM System 2 IMEX', which was implemented to reduce run time.")
