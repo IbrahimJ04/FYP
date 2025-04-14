@@ -10,12 +10,17 @@ import scipy.linalg  # type: ignore
 def imex_gm_system_with_diffusion(system, T, A_0, H_0, delta_t, delta_x, t_end, x_end, D_A, D_H, k=None, c=None):
     epsilon = 1e-10  # Small value to avoid division by zero
 
-    N_t = int(t_end / delta_t) + 1  # Number of time steps
-    N_x = int(x_end / delta_x)      # Number of spatial points
+    N_t = int(t_end / delta_t) + 1  # Number of time points
+            
+        # Example: t_end=10.0, delta_t=0.2 -> N_t = 10/0.2 + 1 = 11 time points
+        # 1 is added to t_end/delta_t, in order to include time 0.0
+        # Time points become: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
-# NOTE: 'N_t-1' would be the number of time POINTS
+    N_x = int(x_end / delta_x) + 1  # Number of spatial points
 
-    # Initialise concentration arrays (2D)
+# NOTE: 'N_t-1'/'N_x-1' would be the number of time/spatial steps (intervals)
+
+    # Initialise arrays
     A = np.zeros((N_x, N_t))
     H = np.zeros((N_x, N_t))
 
@@ -40,7 +45,7 @@ def imex_gm_system_with_diffusion(system, T, A_0, H_0, delta_t, delta_x, t_end, 
     A_matrix = I - delta_t * D_A * laplacian_matrix
     H_matrix = I - delta_t * D_H * laplacian_matrix
 
-    for n in range(N_t - 1):  # Iterate over time
+    for n in range(N_t - 1):  # Iterate over time --> 'for n in range(3) --> gives (0, 1, 2)'
         A_old, H_old = A[:, n], H[:, n]
 
         if system == "GM 1 - With diffusion":
@@ -126,7 +131,7 @@ mu = st.sidebar.number_input("Inhibitor decay rate (μ)", value=1.0, min_value=0
 r = st.sidebar.number_input("Integer r for initial condition", value=1, min_value=1, step=1)
 
 # Generate spatial variable x
-x_vals = np.linspace(0, x_end, int(x_end / delta_x))
+x_vals = np.linspace(0, x_end, int(x_end / delta_x)+1)
 
 # Define initial conditions based on sinusoidal perturbation
 A_0 = mu + 0.1 * np.sin(2 * np.pi * r * x_vals)
